@@ -1,3 +1,6 @@
+#specific to cli-todo
+list.json
+
 # Logs
 logs
 *.log
