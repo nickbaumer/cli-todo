@@ -21,6 +21,9 @@ function command() {
                     },
                     {
                         name: 'quit'
+                    },
+                    {
+                        name: 'test'
                     }
                 ],
                 validate: function (answer) {
@@ -43,6 +46,8 @@ function command() {
             } else if (answers.command == "help") {
                 console.log("Help not yet implemented.");
                 command();
+            } else if (answers.command == "test") {
+                test();
             } else {
                 command();
             }
@@ -82,6 +87,28 @@ function saveToFile() {
         if (err) return console.log(err);
         console.log('Saved successfully.');
     });
+}
+
+function test() {
+    var choices = [];
+    for (choice in myList) {
+        choices.push({name: choice});
+    }
+    inquirer
+        .prompt([
+            {
+                type: 'checkbox',
+                message: 'Command?',
+                name: 'command',
+                choices: choices
+            }
+        ])
+        .then(answers => {
+            for (answer in answers) {
+                delete myList[answer];
+            }
+        });
+        command();
 }
 
 command();
