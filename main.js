@@ -23,7 +23,7 @@ function command() {
                         name: 'quit'
                     },
                     {
-                        name: 'test'
+                        name: 'delete'
                     }
                 ],
                 validate: function (answer) {
@@ -46,8 +46,8 @@ function command() {
             } else if (answers.command == "help") {
                 console.log("Help not yet implemented.");
                 command();
-            } else if (answers.command == "test") {
-                test();
+            } else if (answers.command == "delete") {
+                deleteItem();
             } else {
                 command();
             }
@@ -89,7 +89,7 @@ function saveToFile() {
     });
 }
 
-function test() {
+function deleteItem() {
     var choices = [];
     for (choice in myList) {
         choices.push({name: choice});
@@ -104,11 +104,14 @@ function test() {
             }
         ])
         .then(answers => {
-            for (answer in answers) {
-                delete myList[answer];
+            var count = 0;
+            for (answer in answers.command) {                   
+                delete myList[answers.command[count]];
+                count = count + 1;
             }
+            command();    
         });
-        command();
+        
 }
 
 command();
