@@ -1,6 +1,15 @@
 var inquirer = require('inquirer');
+var TradeItem = require('./Loot');
+const Table = require('cli-table');
 
-var myList = require('./list.json');
+try { var myList = require('./list.json'); }
+catch {
+    var myList = {'sample' : 3};
+}
+try { var pricesList = require('./prices'); }
+catch {
+    var pricesList = {};
+}
 
 function command() {
     inquirer
@@ -20,10 +29,13 @@ function command() {
                         name: 'add'
                     },
                     {
-                        name: 'quit'
+                        name: 'delete'
                     },
                     {
-                        name: 'delete'
+                        name: 'prices'
+                    },
+                    {
+                        name: 'quit'
                     }
                 ],
                 validate: function (answer) {
@@ -44,10 +56,12 @@ function command() {
             } else if (answers.command == "add") {
               add();
             } else if (answers.command == "help") {
-                console.log("Help not yet implemented.");
+                console.log("Choose one of the self-explanatory items.");
                 command();
             } else if (answers.command == "delete") {
                 deleteItem();
+            } else if (answers.command == "prices") {
+                prices();
             } else {
                 command();
             }
@@ -55,9 +69,16 @@ function command() {
 }
 
 function list(list){
+
+    const table = new Table({
+        head: ['Loot', 'Qty']
+      , colWidths: [50, 25]
+    });
     for (key in list) {
-        console.log(key + ":" + list[key]);
+        // console.log(`${key} : ${list[key]}`);
+        table.push([key, list[key]]);
     }
+    console.log(table.toString());
 }
 
 function add() {
@@ -79,6 +100,50 @@ function add() {
         myList[answers.key] = answers.value
         command();
     });
+};
+
+function prices() {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: 'Command?',
+                name: 'command',
+                choices: [
+                    {
+                        name: 'add'
+                    },
+                    {
+                        name: 'list'
+                    },
+                    {
+                        name: 'delete'
+                    },
+                    {
+                        name: 'return'
+                    }
+                ],
+                validate: function (answer) {
+                    if (answer.length < 1) {
+                        return 'You must enter a command.';
+                    }
+                    return true;
+                }
+            }
+        ])
+        .then(answers => {
+            if (answers.command == "return") {
+                command();
+            } else if (answers.command == "add") {
+                addPrices();
+            } else if (answers.command == "delete") {
+              deletePrices();
+            } else if (answers.command == "list") {
+                listPrices();
+            } else {
+                command();
+            }
+        });
 };
 
 function saveToFile() {
